@@ -1,16 +1,17 @@
 class Value:
 
     def __set_name__(self, owner, name):
-        self.name = name
+        self.public_name = name
+        self.private_name = '_' + name
         print(f'Calling class: {owner}\nAttribute name: {name}\n')
 
     def __get__(self, instance, owner):
-        return instance.__dict__[self.name]
+        return instance.__dict__[self.private_name]
 
     def __set__(self, instance, value):
         if value < 0:
             raise ValueError('Must be positive!')
-        instance.__dict__[self.name] = value * (1 - instance.commission)
+        instance.__dict__[self.private_name] = value * (1 - instance.commission)
 
 
 class Account:
@@ -19,11 +20,11 @@ class Account:
     def __init__(self, commission, amount=0):
         self.commission = commission
         if amount:
-            self.amount = amount
+            self._amount = amount
         else:
-            self.amount = 0
+            self._amount = 0
 
     def top_up(self, amount):
         if amount <= 0:
             raise ValueError
-        self.amount += amount * (1 - self.commission)
+        self._amount += amount * (1 - self.commission)
